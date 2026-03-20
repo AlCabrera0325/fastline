@@ -1,10 +1,12 @@
 FROM php:8.2-apache
 
-RUN apt-get update && apt-get install -y \
-    && docker-php-ext-install pdo pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql
 
-RUN a2dismod mpm_event mpm_worker && \
-    a2enmod mpm_prefork rewrite
+RUN a2dismod mpm_event || true && \
+    a2dismod mpm_worker || true && \
+    a2dismod mpm_prefork || true && \
+    a2enmod mpm_prefork && \
+    a2enmod rewrite
 
 COPY . /var/www/html/
 
