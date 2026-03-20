@@ -1,15 +1,21 @@
-FROM php:8.2-apache
+FROM ubuntu:22.04
 
-RUN docker-php-ext-install pdo pdo_mysql
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN a2dismod mpm_event || true && \
-    a2dismod mpm_worker || true && \
-    a2dismod mpm_prefork || true && \
-    a2enmod mpm_prefork && \
-    a2enmod rewrite
+RUN apt-get update && apt-get install -y \
+    apache2 \
+    php8.1 \
+    php8.1-mysql \
+    libapache2-mod-php8.1 \
+    && apt-get clean
+
+RUN a2enmod rewrite
 
 COPY . /var/www/html/
 
-RUN chown -R www-data:www-data /var/www/html/
+RUN chown -R www-data:www-data /var/www/html/ \
+    && chmod -R 755 /var/www/html/
 
 EXPOSE 80
+
+CMD ["apache2ctl", "-D", "FOREGROUND"]
