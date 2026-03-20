@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+
+  # PHP + Apache web server
+  app:
+    build: .
+    container_name: fastline_app
+    ports:
+      - "8080:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_NAME: fl_db
+      DB_USER: fastline_user
+      DB_PASS: fastline_pass
+    volumes:
+      - .:/var/www/html/
+    networks:
+      - fastline_network
+
+  # MySQL database
+  db:
+    image: mysql:8.0
+    container_name: fastline_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: fl_db
+      MYSQL_USER: fastline_user
+      MYSQL_PASSWORD: fastline_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - fastline_db_data:/var/lib/mysql
+      - ./fastline.sql:/docker-entrypoint-initdb.d/fastline.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fastline_network
+
+networks:
+  fastline_network:
+    driver: bridge
+
+volumes:
+  fastline_db_data:

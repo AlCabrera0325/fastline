@@ -1,0 +1,388 @@
+/* ============================================
+   FASTLINE - Main Stylesheet
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ── Header ── */
+.header {
+    background: linear-gradient(135deg, #c92a2a 0%, #e03131 100%);
+    color: white;
+    padding: 20px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo i { font-size: 2rem; }
+
+.logo h1 { font-size: 1.8rem; font-weight: 600; }
+
+/* ── Hero Section ── */
+.hero {
+    background: linear-gradient(135deg, #e03131 0%, #f03e3e 100%);
+    color: white;
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.hero h2 { font-size: 2.5rem; margin-bottom: 10px; font-weight: 700; }
+.hero p  { font-size: 1.2rem; opacity: 0.9; }
+
+/* ── Location Section ── */
+.location-section { padding: 30px 0; }
+
+.location-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.location-card h3 {
+    color: #c92a2a;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.location-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.btn-primary { background: #c92a2a; color: white; }
+.btn-primary:hover {
+    background: #a61e1e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(201,42,42,0.3);
+}
+
+.btn-secondary { background: #495057; color: white; }
+.btn-secondary:hover {
+    background: #343a40;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(73,80,87,0.3);
+}
+
+.manual-location { margin-top: 20px; }
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus { outline: none; border-color: #c92a2a; }
+
+.current-location {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #c92a2a;
+}
+
+.hidden { display: none !important; }
+
+/* ── Search Section ── */
+.search-section { padding: 30px 0; }
+
+.search-box {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.search-box i { color: #c92a2a; font-size: 1.2rem; }
+.search-box input { flex: 1; border: none; outline: none; font-size: 1rem; }
+
+/* ── Category Tabs ── */
+.categories-section { padding: 30px 0 60px; }
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+.tab-button {
+    background: white;
+    border: 2px solid #dee2e6;
+    padding: 15px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 150px;
+    font-size: 0.9rem;
+}
+
+.tab-button i    { font-size: 1.8rem; color: #495057; }
+.tab-button span { font-weight: 600;  color: #495057; }
+
+.tab-button:hover {
+    border-color: #c92a2a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.tab-button.active {
+    background: linear-gradient(135deg, #c92a2a 0%, #e03131 100%);
+    border-color: #c92a2a;
+}
+
+.tab-button.active i,
+.tab-button.active span { color: white; }
+
+/* ── Hotline Cards ── */
+.hotlines-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.hotline-card {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.hotline-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.hotline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 15px;
+}
+
+.hotline-card h4         { color: #c92a2a; font-size: 1.2rem; margin-bottom: 5px; }
+.hotline-card .location-badge {
+    background: #f8f9fa;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.hotline-card .description  { color: #6c757d; margin-bottom: 15px; font-size: 0.95rem; }
+.hotline-card .phone-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hotline-actions { display: flex; gap: 10px; }
+
+.btn-call {
+    flex: 1;
+    background: #28a745;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-call:hover { background: #218838; transform: scale(1.05); }
+
+.btn-favorite {
+    background: #ffc107;
+    color: white;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.btn-favorite:hover  { background: #e0a800; transform: scale(1.1); }
+.btn-favorite.active { background: #ff6b6b; }
+
+.no-results {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+    grid-column: 1 / -1;
+}
+
+.no-results i  { font-size: 4rem; margin-bottom: 20px; opacity: 0.5; display: block; }
+.no-results h3 { font-size: 1.5rem; margin-bottom: 10px; }
+
+/* ── Footer ── */
+.footer {
+    background: #212529;
+    color: white;
+    padding: 40px 0 20px;
+    margin-top: 60px;
+}
+
+.footer p { text-align: center; margin-bottom: 20px; }
+.contributors { margin-top: 30px; }
+.contributors p { font-weight: 600; margin-bottom: 10px; text-align: center; }
+.contributors ul { list-style: none; text-align: center; }
+.contributors li { padding: 5px 0; font-size: 0.9rem; opacity: 0.8; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .hero h2 { font-size: 1.8rem; }
+    .hero p  { font-size: 1rem; }
+    .location-buttons { flex-direction: column; }
+    .tabs { flex-wrap: nowrap; }
+    .tab-button { min-width: 120px; padding: 12px 15px; }
+    .tab-button i    { font-size: 1.5rem; }
+    .tab-button span { font-size: 0.8rem; }
+    .hotlines-container { grid-template-columns: 1fr; }
+    .logo h1 { font-size: 1.3rem; }
+    .contributors li { font-size: 0.8rem; }
+}
+
+@media (max-width: 480px) {
+    .hero         { padding: 40px 20px; }
+    .location-card { padding: 20px; }
+    .hotline-card  { padding: 20px; }
+}
+
+/* ── Header Nav (auth buttons) ── */
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.user-greeting {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.nav-btn-outline {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.4);
+    color: white;
+}
+
+.nav-btn-outline:hover {
+    background: rgba(255,255,255,0.15);
+    border-color: white;
+}
+
+.nav-btn-solid {
+    background: white;
+    border: 1px solid white;
+    color: #c92a2a;
+}
+
+.nav-btn-solid:hover {
+    background: rgba(255,255,255,0.88);
+    transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+    .header-inner { justify-content: center; }
+    .nav-btn { padding: 7px 14px; font-size: 0.82rem; }
+    .user-greeting { font-size: 0.82rem; }
+}
