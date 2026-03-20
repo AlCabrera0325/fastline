@@ -1,6 +1,7 @@
 <?php
 session_start();
 header('Content-Type: application/json');
+require __DIR__ . '/../includes/db.php';
 
 // Initialize session for favorite
 if (!isset($_SESSION['favorites'])) {

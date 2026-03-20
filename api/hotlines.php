@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require '../includes/db.php';
+require __DIR__ . '/../includes/db.php';
 
 $category = $_GET['category'] ?? '';
 $city     = $_GET['city']     ?? '';
