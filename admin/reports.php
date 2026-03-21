@@ -20,16 +20,22 @@ try {
 
     $totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 
+    // Fixed query — uses MIN(created_at) to satisfy strict GROUP BY mode
     $usersByMonth = $pdo->query("
-        SELECT DATE_FORMAT(created_at, '%M %Y') as month, COUNT(*) as total
-        FROM users GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-        ORDER BY created_at DESC LIMIT 6
+        SELECT DATE_FORMAT(MIN(created_at), '%M %Y') as month,
+               DATE_FORMAT(MIN(created_at), '%Y-%m') as month_key,
+               COUNT(*) as total
+        FROM users
+        GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+        ORDER BY month_key DESC
+        LIMIT 6
     ")->fetchAll(PDO::FETCH_ASSOC);
 
     $topFavorites = $pdo->query("
         SELECT h.name, h.category, h.city, h.phone, COUNT(f.id) as favorite_count
         FROM hotlines h LEFT JOIN favorites f ON h.id = f.hotline_id
-        GROUP BY h.id ORDER BY favorite_count DESC LIMIT 5
+        GROUP BY h.id, h.name, h.category, h.city, h.phone
+        ORDER BY favorite_count DESC LIMIT 5
     ")->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
