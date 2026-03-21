@@ -1,51 +1,40 @@
 <?php
 session_start();
 if (!isset($_SESSION['admin'])) { header('Location: login.php'); exit; }
-require '../includes/db.php';
+require __DIR__ . '/../includes/db.php';
 
-$total    = $pdo->query("SELECT COUNT(*) FROM hotlines")->fetchColumn();
-$active   = $pdo->query("SELECT COUNT(*) FROM hotlines WHERE is_active = 1")->fetchColumn();
-$inactive = $pdo->query("SELECT COUNT(*) FROM hotlines WHERE is_active = 0")->fetchColumn();
+try {
+    $total    = $pdo->query("SELECT COUNT(*) FROM hotlines")->fetchColumn();
+    $active   = $pdo->query("SELECT COUNT(*) FROM hotlines WHERE is_active = 1")->fetchColumn();
+    $inactive = $pdo->query("SELECT COUNT(*) FROM hotlines WHERE is_active = 0")->fetchColumn();
 
-$byCategory = $pdo->query("
-    SELECT category,
-           COUNT(*) as total,
-           SUM(is_active) as active,
-           SUM(is_active = 0) as inactive
-    FROM hotlines
-    GROUP BY category
-    ORDER BY total DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+    $byCategory = $pdo->query("
+        SELECT category, COUNT(*) as total, SUM(is_active) as active, SUM(is_active = 0) as inactive
+        FROM hotlines GROUP BY category ORDER BY total DESC
+    ")->fetchAll(PDO::FETCH_ASSOC);
 
-$byCity = $pdo->query("
-    SELECT city,
-           COUNT(*) as total,
-           SUM(is_active) as active
-    FROM hotlines
-    GROUP BY city
-    ORDER BY total DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+    $byCity = $pdo->query("
+        SELECT city, COUNT(*) as total, SUM(is_active) as active
+        FROM hotlines GROUP BY city ORDER BY total DESC
+    ")->fetchAll(PDO::FETCH_ASSOC);
 
-$totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+    $totalUsers = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 
-$usersByMonth = $pdo->query("
-    SELECT DATE_FORMAT(created_at, '%M %Y') as month,
-           COUNT(*) as total
-    FROM users
-    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-    ORDER BY created_at DESC
-    LIMIT 6
-")->fetchAll(PDO::FETCH_ASSOC);
+    $usersByMonth = $pdo->query("
+        SELECT DATE_FORMAT(created_at, '%M %Y') as month, COUNT(*) as total
+        FROM users GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+        ORDER BY created_at DESC LIMIT 6
+    ")->fetchAll(PDO::FETCH_ASSOC);
 
-$topFavorites = $pdo->query("
-    SELECT h.name, h.category, h.city, h.phone,
-           COUNT(f.id) as favorite_count
-    FROM hotlines h
-    LEFT JOIN favorites f ON h.id = f.hotline_id
-    GROUP BY h.id
-    ORDER BY favorite_count DESC
-    LIMIT 5
-")->fetchAll(PDO::FETCH_ASSOC);
+    $topFavorites = $pdo->query("
+        SELECT h.name, h.category, h.city, h.phone, COUNT(f.id) as favorite_count
+        FROM hotlines h LEFT JOIN favorites f ON h.id = f.hotline_id
+        GROUP BY h.id ORDER BY favorite_count DESC LIMIT 5
+    ")->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    die("<p style='color:red;font-family:sans-serif;padding:20px'>Database error: " . htmlspecialchars($e->getMessage()) . "</p>");
+}
 
 $catColors = [
     'police'   => ['bg' => 'rgba(52,144,220,0.15)',  'color' => '#74b9ff', 'icon' => 'fa-shield-alt'],
@@ -63,20 +52,21 @@ $catColors = [
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
-        :root { --red:#c92a2a; --red-dark:#a61e1e; --bg:#0d0d0d; --surface:#161616; --surface2:#1e1e1e; --border:rgba(255,255,255,0.08); --text:#f0f0f0; --muted:#888; }
+        :root { --red:#c92a2a; --bg:#0d0d0d; --surface:#161616; --border:rgba(255,255,255,0.08); --text:#f0f0f0; --muted:#888; }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-        .navbar { background:var(--surface); border-bottom:1px solid var(--border); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; }
+        .navbar { background:var(--surface); border-bottom:1px solid var(--border); padding:14px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
         .brand { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:3px; display:flex; align-items:center; gap:10px; }
         .brand i { color:var(--red); }
-        .nav-links { display:flex; gap:12px; align-items:center; }
-        .nav-link { color:var(--muted); text-decoration:none; font-size:0.85rem; display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; transition:all 0.2s; border:1px solid transparent; }
+        .nav-links { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .nav-link { color:var(--muted); text-decoration:none; font-size:0.83rem; display:flex; align-items:center; gap:6px; padding:7px 13px; border-radius:8px; transition:all 0.2s; border:1px solid transparent; white-space:nowrap; }
         .nav-link:hover { color:var(--text); border-color:var(--border); }
         .nav-link.active { color:#ff8080; border-color:rgba(201,42,42,0.3); background:rgba(201,42,42,0.08); }
         .page { max-width:1200px; margin:0 auto; padding:32px 24px; }
-        .page-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:2px; margin-bottom:28px; display:flex; align-items:center; gap:10px; }
+        .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+        .page-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:2px; display:flex; align-items:center; gap:10px; }
         .page-title i { color:var(--red); }
-        .summary-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; margin-bottom:32px; }
+        .summary-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:16px; margin-bottom:32px; }
         .summary-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
         .summary-card .num { font-family:'Bebas Neue',sans-serif; font-size:2.4rem; color:var(--red); line-height:1; }
         .summary-card .lbl { font-size:0.75rem; color:var(--muted); margin-top:4px; text-transform:uppercase; letter-spacing:1px; }
@@ -94,7 +84,7 @@ $catColors = [
         .cat-info { flex:1; }
         .cat-name { font-size:0.88rem; font-weight:600; text-transform:capitalize; margin-bottom:4px; }
         .cat-bar-wrap { height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
-        .cat-bar { height:100%; border-radius:3px; transition:width 0.8s ease; }
+        .cat-bar { height:100%; border-radius:3px; }
         .cat-nums { font-size:0.8rem; color:var(--muted); margin-top:3px; }
         .cat-nums span { color:var(--text); font-weight:600; }
         table { width:100%; border-collapse:collapse; font-size:0.85rem; }
@@ -103,10 +93,10 @@ $catColors = [
         tr:last-child td { border-bottom:none; }
         tr:hover td { background:rgba(255,255,255,0.02); }
         .badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600; }
-        .badge-police   { background:rgba(52,144,220,0.15);  color:#74b9ff; }
-        .badge-medical  { background:rgba(40,167,69,0.15);   color:#6fcf97; }
-        .badge-fire     { background:rgba(253,126,20,0.15);  color:#fda94f; }
-        .badge-disaster { background:rgba(255,193,7,0.15);   color:#ffd43b; }
+        .badge-police   { background:rgba(52,144,220,0.15); color:#74b9ff; }
+        .badge-medical  { background:rgba(40,167,69,0.15);  color:#6fcf97; }
+        .badge-fire     { background:rgba(253,126,20,0.15); color:#fda94f; }
+        .badge-disaster { background:rgba(255,193,7,0.15);  color:#ffd43b; }
         .mini-bar { height:4px; background:rgba(255,255,255,0.06); border-radius:2px; margin-top:4px; }
         .mini-fill { height:100%; border-radius:2px; background:var(--red); }
         .month-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
@@ -140,8 +130,8 @@ $catColors = [
 </nav>
 
 <div class="page">
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:28px;">
-        <div class="page-title" style="margin-bottom:0;"><i class="fas fa-chart-bar"></i> System Reports</div>
+    <div class="page-header">
+        <div class="page-title"><i class="fas fa-chart-bar"></i> System Reports</div>
         <button class="btn-print" onclick="window.print()"><i class="fas fa-print"></i> Print Report</button>
     </div>
 
@@ -194,12 +184,10 @@ $catColors = [
             <div class="section-title"><i class="fas fa-map-marker-alt"></i> Hotlines by City</div>
             <div style="overflow-x:auto;">
                 <table>
-                    <thead>
-                        <tr><th>City</th><th>Total</th><th>Active</th><th>Coverage</th></tr>
-                    </thead>
+                    <thead><tr><th>City</th><th>Total</th><th>Active</th><th>Coverage</th></tr></thead>
                     <tbody>
                         <?php
-                        $maxCity = $byCity[0]['total'] ?? 1;
+                        $maxCity = !empty($byCity) ? ($byCity[0]['total'] ?? 1) : 1;
                         foreach ($byCity as $row):
                             $pct = round(($row['total'] / $maxCity) * 100);
                         ?>
@@ -207,9 +195,7 @@ $catColors = [
                             <td><?php echo ucfirst(str_replace('_', ' ', $row['city'])); ?></td>
                             <td><strong><?php echo $row['total']; ?></strong></td>
                             <td><?php echo $row['active']; ?></td>
-                            <td style="width:80px">
-                                <div class="mini-bar"><div class="mini-fill" style="width:<?php echo $pct; ?>%"></div></div>
-                            </td>
+                            <td style="width:80px"><div class="mini-bar"><div class="mini-fill" style="width:<?php echo $pct; ?>%"></div></div></td>
                         </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -226,9 +212,7 @@ $catColors = [
                 <div class="empty">No favorites recorded yet.</div>
             <?php else: ?>
             <table>
-                <thead>
-                    <tr><th>Hotline</th><th>Category</th><th>Favorites</th></tr>
-                </thead>
+                <thead><tr><th>Hotline</th><th>Category</th><th>Favorites</th></tr></thead>
                 <tbody>
                     <?php foreach ($topFavorites as $fav): if ($fav['favorite_count'] == 0) continue; ?>
                     <tr>
